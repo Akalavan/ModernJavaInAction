@@ -3,6 +3,7 @@ package chap01;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -122,7 +123,25 @@ public class FilteringApples {
         List<Apple> redApples = filter(inventory, apple -> Color.RED.equals(apple.getColor()));
         List<Integer> evenNumbers = filter(listInt, i -> i % 2 == 0);
 
+        Predicate<Apple> green = FilteringApples::isGreenApple;
+        Predicate<Apple> notGreen = green.negate();
+
+        Predicate<Apple> greenAndHeavy = green.and(a -> a.getWeight() > 150);
+        Predicate<Apple> greenAndHeavyOrRed = greenAndHeavy.or(apple -> Color.RED.equals(apple.getColor()));
+
+        Function<Integer, Integer> f = x -> x + 1;
+        Function<Integer, Integer> g = x -> x * 2;
+        Function<Integer, Integer> h = f.andThen(g);
+        int result = h.apply(1); // 4
+
+        Function<Integer, Integer> h1 = f.compose(g);
+        int result1 = h.apply(1); // 3
+
+        Function<String, String> let = ((Function<String, String>) Letter::addHeader)
+                .andThen(Letter::checkSpelling)
+                .andThen(Letter::addFooter);
     }
+
 
     public static <T> List<T> filter(List<T> list, Predicate<T> p) {
         List<T> result = new ArrayList<>();
@@ -134,5 +153,19 @@ public class FilteringApples {
         }
 
         return result;
+    }
+}
+
+class Letter {
+    public static String addHeader(String text) {
+        return "Header: " + text;
+    }
+
+    public static String addFooter(String text) {
+        return text + " Footer";
+    }
+
+    public static String checkSpelling(String text) {
+        return text.replaceAll("labda", "lambda");
     }
 }
