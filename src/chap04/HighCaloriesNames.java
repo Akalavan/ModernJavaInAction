@@ -15,5 +15,15 @@ public class HighCaloriesNames {
         
 
         System.out.println(nameDish);
+
+        List<Dish> dishMeat = Dish.menu
+                .stream()
+                .filter(dish -> Dish.Type.MEAT.equals(dish.getType()))
+                .limit(2)
+                .collect(Collectors.toList());
+
+        System.out.println(dishMeat);
+
+
     }
 }
