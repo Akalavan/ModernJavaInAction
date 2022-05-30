@@ -1,7 +1,6 @@
 package chap03;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,14 +30,14 @@ public class ExecuteAround {
 
     // before java8
     public static String processFile() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("resources/chap05/data.txt"))) {
             return br.readLine();
         }
     }
 
     // after java8
     public static String processFile(BufferedReaderProcessor brp) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("resources/chap05/data.txt"))) {
             return brp.process(br);
         }
     }
