@@ -1,9 +1,7 @@
 package chap06;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GroupingTransactions {
 
@@ -24,12 +22,35 @@ public class GroupingTransactions {
     );
 
     public static void main(String[] args) {
-
+        groupImperatively();
+        groupFunctionally();
     }
 
     private static void groupImperatively() {
         Map<Currency, List<Transaction>> transactionsByCurrencies = new HashMap<>();
 
+        for (Transaction transaction :
+                transactions) {
+            Currency currency = transaction.getCurrency();
+            List<Transaction> transactionsForCurrency = transactionsByCurrencies.get(currency);
+
+            if (transactionsForCurrency == null) {
+                transactionsForCurrency = new ArrayList<>();
+                transactionsByCurrencies.put(currency, transactionsForCurrency);
+            }
+            transactionsForCurrency.add(transaction);
+        }
+
+        System.out.println(transactionsByCurrencies);
+
+    }
+
+    private static void groupFunctionally() {
+        Map<Currency, List<Transaction>> transactionsByCurrencies = transactions
+                .stream()
+                .collect(Collectors.groupingBy(Transaction::getCurrency));
+
+        System.out.println(transactionsByCurrencies);
     }
 
     public static class Transaction {
