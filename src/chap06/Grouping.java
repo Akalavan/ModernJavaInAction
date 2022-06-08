@@ -24,6 +24,7 @@ public class Grouping {
         System.out.println("Most caloric dishes by type: " + mostCaloricDishesByType());
         System.out.println("Most caloric dishes by type: " + mostCaloricDishesByTypeWithoutOprionals());
         System.out.println("Sum calories by type: " + sumCaloriesByType());
+        System.out.println("Caloric levels by type: " + caloricLevelsByType());
     }
 
     private static Map<Dish.Type, List<Dish>> groupDishesByType() {
@@ -97,5 +98,15 @@ public class Grouping {
                 Collectors.groupingBy(Dish::getType,
                         Collectors.summingInt(Dish::getCalories))
         );
+    }
+
+    private static Map<Dish.Type, Set<CaloricLevel>> caloricLevelsByType() {
+        return menu.stream().collect(
+                Collectors.groupingBy(Dish::getType,
+                        Collectors.mapping(dish -> {
+                            if (dish.getCalories() <= 400) return CaloricLevel.DIET;
+                            else if (dish.getCalories() <= 700) return CaloricLevel.NORMAL;
+                            else return CaloricLevel.FAT;
+                        }, Collectors.toSet())));
     }
 }
