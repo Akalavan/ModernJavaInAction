@@ -24,6 +24,11 @@ public class Lambdas {
 
         Runnable r2 = () -> System.out.println("Hello world");
 
+        String a = null;
+        a.equals("s");
+//some code
 
+        
+        
     }
 }

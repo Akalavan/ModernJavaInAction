@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Tasks {
 
@@ -33,7 +35,7 @@ public class Tasks {
         String strAllTraders = Transaction.TRANSACTIONS.stream()
                 .map(t -> t.getTrader().getName())
                 .sorted()
-                .reduce("", (a, b) -> a + " " + b);
+                .collect(Collectors.joining());
 
         System.out.println(strAllTraders);
 
@@ -43,12 +45,11 @@ public class Tasks {
 
         System.out.println(oneBerezniki);
 
-        double sum = Transaction.TRANSACTIONS.stream()
+        Transaction.TRANSACTIONS.stream()
                 .filter(t -> "SPB".equals(t.getTrader().getCity()))
                 .map(Transaction::getPrice)
-                .reduce(0.0, Double::sum);
+                .forEach(System.out::println);
 
-        System.out.println(sum);
 
         double max = Transaction.TRANSACTIONS.stream()
                 .map(Transaction::getPrice)
@@ -66,5 +67,25 @@ public class Tasks {
                 .min(Comparator.comparing(Transaction::getPrice));
 
         System.out.println(minTr.map(String::valueOf).orElse("Not fount"));
+
+        Stream<int[]> pythagoreanTriples =
+                IntStream.rangeClosed(1, 100)
+                        .boxed()
+                        .flatMap(a -> IntStream.rangeClosed(a, 100)
+                                .filter(b -> Math.sqrt(a * a + b * b) % 1 == 0)
+                                .mapToObj(b -> new int[]{a, b, (int) Math.sqrt(a * a + b * b)})
+                        );
+
+        pythagoreanTriples.limit(5).forEach(t -> System.out.println(t[0] + ", " + t[1] + ", " + t[2]));
+
+        Stream<double[]> pythagoreanTriples2 =
+                IntStream.rangeClosed(1, 100)
+                        .boxed()
+                        .flatMap(a -> IntStream.rangeClosed(a, 100)
+                                .mapToObj(b -> new double[]{a, b, Math.sqrt(a * a + b * b)})
+                                .filter(t -> t[2] % 1 == 0)
+                        );
+
+        pythagoreanTriples2.limit(5).forEach(t -> System.out.println(t[0] + ", " + t[1] + ", " + t[2]));
     }
 }
