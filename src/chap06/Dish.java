@@ -1,6 +1,5 @@
-package chap04;
+package chap06;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 public class Dish {
-
     private final String name;
     private final boolean vegetarian;
     private final int calories;
@@ -37,15 +35,15 @@ public class Dish {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public enum Type {
         MEAT,
         FISH,
         OTHER
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     public static final List<Dish> menu = asList(
@@ -61,7 +59,6 @@ public class Dish {
     );
 
     public static final Map<String, List<String>> dishTags = new HashMap<>();
-
     static {
         dishTags.put("pork", asList("greasy", "salty"));
         dishTags.put("beef", asList("salty", "roasted"));
