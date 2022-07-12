@@ -1,9 +1,7 @@
 package chap08;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
@@ -13,6 +11,10 @@ public class WorkingWithCollections {
     public static void main(String[] args) {
         workingWithLists();
         workingWithMaps();
+        computingOnMaps();
+        removingFromMaps();
+        replacingInMaps();
+        mergingMaps();
     }
 
     private static void workingWithLists() {
@@ -70,5 +72,106 @@ public class WorkingWithCollections {
         System.out.println("--> Using getOrDefault()");
         System.out.println(favouriteMovies.getOrDefault("Olivia", "Matrix"));
         System.out.println(favouriteMovies.getOrDefault("Thibaut", "Matrix"));
+    }
+
+    private static void computingOnMaps() {
+        Map<String, List<String>> friendsToMovies = new HashMap<>();
+
+        System.out.println("--> Adding a friend and movie in a verbose way");
+        String friend = "Raphael";
+        List<String> movies = friendsToMovies.get(friend);
+
+        if (movies == null) {
+            movies = new ArrayList<>();
+            friendsToMovies.put(friend, movies);
+        }
+
+        movies.add("Star Wars");
+        System.out.println(friendsToMovies);
+
+        System.out.println("--> Adding a friend and movie using computeIfAbsent()");
+        friendsToMovies.clear();
+        friendsToMovies.computeIfAbsent("Raphael", name -> new ArrayList<>()).add("Star Wars");
+        System.out.println(friendsToMovies);
+    }
+
+    private static void removingFromMaps() {
+        Map<String, String> favouriteMovies = new HashMap<>();
+        favouriteMovies.put("Raphael", "Jack Reacher 2");
+        favouriteMovies.put("Cristina", "Matrix");
+        favouriteMovies.put("Olivia", "James Bond");
+
+        String key = "Raphael";
+        String value = "Jack Reacher 2";
+
+        System.out.println("--> Removing an unwanted entry the cumbersome way");
+        boolean result = remove(favouriteMovies, key, value);
+        System.out.printf("%s [%b]%n", favouriteMovies, result);
+
+        favouriteMovies.put("Raphael", "Jack Reacher 2");
+
+        System.out.println("--> Removing an unwanted the easy way");
+        favouriteMovies.remove(key, value);
+        System.out.printf("%s [%b]%n", favouriteMovies, result);
+
+    }
+
+    private static <K, V> boolean remove(Map<K, V> favouriteMovies, K key, V value) {
+        if (favouriteMovies.containsKey(key) && Objects.equals(favouriteMovies.get(key), value)) {
+            favouriteMovies.remove(key);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void replacingInMaps() {
+        Map<String, String> favouriteMovies = new HashMap<>();
+        favouriteMovies.put("Raphael", "Star Wars");
+        favouriteMovies.put("Olivia", "james bond");
+
+        System.out.println("--> Replacing values in a map with replaceAll()");
+        favouriteMovies.replaceAll((friend, movie) -> movie.toUpperCase());
+        System.out.println(favouriteMovies);
+    }
+
+    private static void mergingMaps() {
+        Map<String, String> family = Map.ofEntries(
+                entry("Teo", "Star Wars"),
+                entry("Cristina", "James Bond"));
+        Map<String, String> friends = Map.ofEntries(entry("Raphael", "Star Wars"));
+
+        System.out.println("--> Merging the old way");
+        Map<String, String> everyone = new HashMap<>(family);
+        everyone.putAll(friends);
+        System.out.println(everyone);
+
+        Map<String, String> friends2 = Map.ofEntries(
+                entry("Raphael", "Star Wars"),
+                entry("Cristina", "Matrix"));
+
+        System.out.println("--> Merging maps using merge()");
+        Map<String, String> everyone2 = new HashMap<>(family);
+        friends2.forEach((k, v) -> everyone2.merge(k, v, (movie1, movie2) -> movie1 + " & " + movie2));
+        System.out.println(everyone2);
+
+        Map<String, Long> moviesToCount = new HashMap<>();
+        String movieName = "JamesBond";
+        Long count = moviesToCount.get(movieName);
+        if (count == null) {
+            moviesToCount.put(movieName, 1L);
+        } else {
+            moviesToCount.put(movieName, count + 1);
+        }
+
+        moviesToCount.merge(movieName, 1L, (key, c) -> c + 1L);
+        System.out.println(moviesToCount);
+
+    }
+
+    private static void ConcurrentHasMap() {
+        ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<>();
+        long parallelismThreshold = 1;
+        Optional<Long> maxValue = Optional.ofNullable(map.reduceValues(parallelismThreshold, Long::max));
     }
 }
