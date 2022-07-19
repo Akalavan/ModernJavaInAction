@@ -2,6 +2,7 @@ package chap10;
 
 import chap10.model.Order;
 
+import static chap10.MixedBuilder.forCustomer;
 import static chap10.NestedFunctionOrderBuilder.*;
 
 /**
@@ -14,6 +15,7 @@ public class Main {
         Main main = new Main();
         main.nestedFunction();
         main.lambda();
+        main.mixed();
     }
 
     public void nestedFunction() {
@@ -52,6 +54,22 @@ public class Main {
         });
 
         System.out.println("Lambda:");
+        System.out.println(order);
+    }
+
+    public void mixed() {
+        Order order =
+                forCustomer("BigBank",
+                        chap10.MixedBuilder.buy(t -> t.quantity(80)
+                                .stock("IBM")
+                                .on("NYSE")
+                                .at(125.00)),
+                        chap10.MixedBuilder.sell(t -> t.quantity(50)
+                                .stock("GOOGLE")
+                                .on("NASDAQ")
+                                .at(375.00)));
+
+        System.out.println("Mixed:");
         System.out.println(order);
     }
 }
